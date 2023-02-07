@@ -1,9 +1,13 @@
+import { getAll } from "@vercel/edge-config";
+
 /**
  * @param {import('@vercel/node').VercelRequest} request
  * @param {import('@vercel/node').VercelResponse} response
  */
-export default function handler(request, response) {
+export default async function handler(request, response) {
   // const MY_SECRET = process.env.MY_SECRET
+
+  const data = await getAll();
 
   const headers = request?.headers;
 
@@ -21,10 +25,7 @@ export default function handler(request, response) {
   const object = {
     headers,
     date,
-    link1: 1,
-    link2: 2,
-    link3: 3,
-    link4: 4,
+    ...data,
   };
   response.status(200).json(object);
 }
