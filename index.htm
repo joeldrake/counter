@@ -68,5 +68,14 @@
         <a href="#4">Länk 4</a> <span>[123 nedladdningar]</span>
       </div>
     </div>
+
+    <script>
+      async function getCount() {
+        const result = await fetch(`/api/getCount.js`);
+        const data = await result.json();
+        console.log(data);
+      }
+      getCount();
+    </script>
   </body>
 </html>
