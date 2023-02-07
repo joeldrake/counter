@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Räknare</title>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        margin: 0;
+        padding: 0;
+        font-size: 150%;
+      }
+      body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: grid;
+        place-content: center;
+        margin: 0;
+        padding: 1rem;
+      }
+
+      .content {
+        max-width: 500px;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      .links {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem 2rem;
+      }
+
+      @media (max-width: 400px) {
+        body {
+          display: block;
+        }
+        .links {
+          grid-template-columns: none;
+          gap: 0;
+        }
+        .links span {
+          margin-bottom: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Räknare</h1>
+      <p>Exempel för att räkna klick</p>
+      <div class="links">
+        <a href="#1">Länk 1</a> <span>[123 nedladdningar]</span>
+        <a href="#2">Länk 2</a> <span>[123 nedladdningar]</span>
+        <a href="#3">Länk 3</a> <span>[123 nedladdningar]</span>
+        <a href="#4">Länk 4</a> <span>[123 nedladdningar]</span>
+      </div>
+    </div>
+  </body>
+</html>
