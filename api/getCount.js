@@ -1,10 +1,10 @@
 export default function handler(request, response) {
   const object = {
-    secret: process.env.MY_SECRET,
-    link1_test: 0,
-    link2: 0,
-    link3: 0,
-    link4: 0,
+    asd: process.env.MY_SECRET,
+    link1: 1,
+    link2: 2,
+    link3: 3,
+    link4: 4,
   };
   response.status(200).json(object);
 
