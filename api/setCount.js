@@ -7,6 +7,19 @@ import { get } from "@vercel/edge-config";
 export default async function handler(request, response) {
   const key = request?.body?.id;
 
+  console.log(request.method);
+
+  response.setHeader("Access-Control-Allow-Origin", "*");
+  response.setHeader("Access-Control-Allow-Headers", "*");
+  response.setHeader("Access-Control-Allow-Methods", "POST");
+
+  if (request.method === "OPTIONS") {
+    response.setHeader("Connection", "keep-alive");
+
+    response.status(200).json();
+    return;
+  }
+
   if (typeof key !== "string") {
     return response.status(400).json({ success: false });
   }

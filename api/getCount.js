@@ -7,6 +7,8 @@ import { getAll } from "@vercel/edge-config";
 export default async function handler(request, response) {
   const data = await getAll();
 
+  response.setHeader("Access-Control-Allow-Origin", "*");
+
   if (typeof data.visits === "number") {
     // increment visits by 1
     fetch(
@@ -36,5 +38,8 @@ export default async function handler(request, response) {
     link3: data.link3,
     link4: data.link4,
   };
+
+  console.log(return_object);
+
   response.status(200).json(return_object);
 }
