@@ -5,12 +5,18 @@ import { get } from "@vercel/edge-config";
  * @param {import('@vercel/node').VercelResponse} response
  */
 export default async function handler(request, response) {
-  // const MY_SECRET = process.env.MY_SECRET
+  const key = request?.body?.id;
 
-  const key = "link4";
+  if (typeof key !== "string") {
+    return response.status(400).json({ success: false });
+  }
 
-  const currentValue = await get(key);
-  const newValue = currentValue + 1;
+  let currentValue = await get(key);
+
+  if (typeof currentValue !== "number") {
+    // only allow existing keys with a number
+    return response.status(400).json({ success: false });
+  }
 
   const url = `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`;
 
@@ -25,15 +31,11 @@ export default async function handler(request, response) {
         {
           operation: "update",
           key: key,
-          value: newValue,
+          value: currentValue + 1,
         },
       ],
     }),
   });
 
-  const success = result.status === 200;
-
-  response.status(200).json({
-    success,
-  });
+  response.status(200).json({ success: result.status === 200 });
 }

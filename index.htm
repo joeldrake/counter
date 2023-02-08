@@ -27,17 +27,22 @@
         place-content: center;
         margin: 0;
         padding: 1rem;
+        background: url("bookshelf.jpg");
+        background-size: cover;
       }
 
       .content {
         max-width: 500px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 1rem;
+        padding-bottom: 2rem;
       }
 
       h1 {
         margin: 0;
       }
 
-      .links {
+      .links_wrapper {
         display: grid;
         grid-template-columns: auto 1fr;
         gap: 1rem 2rem;
@@ -47,11 +52,10 @@
         body {
           display: block;
         }
-        .links {
-          grid-template-columns: none;
-          gap: 0;
+        .links_wrapper {
+          display: block;
         }
-        .links span {
+        .links_wrapper div {
           margin-bottom: 1rem;
         }
       }
@@ -60,22 +64,94 @@
   <body>
     <div class="content">
       <h1>Räknare</h1>
-      <p>Exempel för att räkna klick</p>
-      <div class="links">
-        <a href="#1">Länk 1</a> <span>[123 nedladdningar]</span>
-        <a href="#2">Länk 2</a> <span>[123 nedladdningar]</span>
-        <a href="#3">Länk 3</a> <span>[123 nedladdningar]</span>
-        <a href="#4">Länk 4</a> <span>[123 nedladdningar]</span>
+      <p>
+        Exempel för att räkna klick. Värden laddas dynamiskt efter sidan har
+        laddats.
+      </p>
+      <div class="links_wrapper">
+        <a href="sample.pdf" id="link1" download>Länk 1</a>
+        <div data-id="link1">...</div>
+
+        <a href="sample.pdf" id="link2" download>Länk 2</a>
+        <div data-id="link2">...</div>
+
+        <a href="sample.pdf" id="link3" download>Länk 3</a>
+        <div data-id="link3">...</div>
+
+        <a href="sample.pdf" id="link4" download>Länk 4</a>
+        <div data-id="link4">...</div>
       </div>
     </div>
 
     <script>
+      // set data in global scope so clicks can increment it locally
+      let data = {};
+      let id_pending = [];
+
+      function updateDisplays() {
+        const count_displays = document
+          .querySelector(".links_wrapper")
+          .querySelectorAll("div[data-id]");
+
+        for (const div of count_displays) {
+          const id = div.getAttribute("data-id");
+          const downloads = data[id];
+          if (typeof downloads === "number") {
+            div.innerText = `[${data[id]} nedladdningar]`;
+          } else {
+            div.innerText = ``;
+          }
+        }
+      }
+
       async function getCount() {
         const result = await fetch(`/api/getCount.js`);
-        const data = await result.json();
-        console.log(data);
+        data = await result.json();
+        updateDisplays();
       }
+
+      function handleClick(e) {
+        const id = e?.target?.id;
+        if (!id) return;
+
+        if (!id_pending.includes(id) && typeof data[id] === "number") {
+          data[id] = data[id] + 1;
+          updateDisplays();
+        }
+
+        incrementId(id);
+      }
+
+      function incrementId(id) {
+        id_pending.push(id);
+        fetch("/api/setCount.js", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        })
+          .catch((error) => {
+            console.error(error);
+          })
+          .finally(() => {
+            id_pending = id_pending.filter((i) => i !== id);
+          });
+      }
+
+      const links = document
+        .querySelector(".links_wrapper")
+        .querySelectorAll("a");
+
+      for (const link of links) {
+        link.addEventListener("click", handleClick);
+      }
+
+      // load count numbers
       getCount();
+
+      // count visits
+      incrementId("visits");
     </script>
   </body>
 </html>

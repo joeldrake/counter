@@ -5,27 +5,36 @@ import { getAll } from "@vercel/edge-config";
  * @param {import('@vercel/node').VercelResponse} response
  */
 export default async function handler(request, response) {
-  // const MY_SECRET = process.env.MY_SECRET
-
   const data = await getAll();
 
-  const headers = request?.headers;
+  if (typeof data.visits === "number") {
+    // increment visits by 1
+    fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_CONFIG_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "update",
+              key: "visits",
+              value: data.visits + 1,
+            },
+          ],
+        }),
+      }
+    );
+  }
 
-  /**
-   * @type {Intl.DateTimeFormatOptions}
-   */
-  const options = {
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
+  const return_object = {
+    link1: data.link1,
+    link2: data.link2,
+    link3: data.link3,
+    link4: data.link4,
   };
-
-  const date = new Date().toLocaleDateString("sv-SE", options);
-
-  const object = {
-    headers,
-    date,
-    ...data,
-  };
-  response.status(200).json(object);
+  response.status(200).json(return_object);
 }
