@@ -104,10 +104,17 @@
         }
       }
 
-      async function getCount() {
-        const result = await fetch(`/api/getCount.js`);
-        data = await result.json();
-        updateDisplays();
+      function getCount() {
+        fetch(`/api/getCount.js`)
+          .then(async (result) => {
+            data = await result.json();
+          })
+          .catch((error) => {
+            console.error(error);
+          })
+          .finally(() => {
+            updateDisplays();
+          });
       }
 
       function handleClick(e) {
