@@ -107,7 +107,14 @@
       function getCount() {
         fetch(`/api/getCount.js`)
           .then(async (result) => {
-            data = await result.json();
+            result
+              .json()
+              .then((newData) => {
+                data = newData;
+              })
+              .catch((error) => {
+                console.error(error);
+              });
           })
           .catch((error) => {
             console.error(error);
