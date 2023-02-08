@@ -106,7 +106,9 @@
 
       async function getCount() {
         try {
-          const result = await fetch(`/api/getCount.js`);
+          const result = await fetch(
+            "https://counter-example.vercel.app/api/getCount.js"
+          );
           data = await result.json();
         } catch (error) {
           console.error(error);
@@ -131,7 +133,7 @@
         id_pending.push(id);
 
         try {
-          fetch("/api/setCount.js", {
+          fetch("https://counter-example.vercel.app/api/setCount.js", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

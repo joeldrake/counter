@@ -7,8 +7,6 @@ import { get } from "@vercel/edge-config";
 export default async function handler(request, response) {
   const key = request?.body?.id;
 
-  console.log(request.method);
-
   response.setHeader("Access-Control-Allow-Origin", "*");
   response.setHeader("Access-Control-Allow-Headers", "*");
   response.setHeader("Access-Control-Allow-Methods", "POST");

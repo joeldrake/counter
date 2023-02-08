@@ -39,7 +39,5 @@ export default async function handler(request, response) {
     link4: data.link4,
   };
 
-  console.log(return_object);
-
   response.status(200).json(return_object);
 }
