@@ -18,7 +18,7 @@ export default async function handler(request, response) {
   response.setHeader('Access-Control-Allow-Origin', '*');
 
   const planetScaleResponse = await conn.execute(
-    `SELECT * FROM counter WHERE id LIKE 'pdf%'`,
+    `SELECT * FROM counter WHERE id LIKE 'link%'`,
   );
 
   let return_object = {};

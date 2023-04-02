@@ -28,7 +28,9 @@ export default async function handler(request, response) {
     return;
   }
 
-  if (typeof key !== 'string') {
+  const allowedKeys = ['link1', 'link2', 'link3', 'link4', 'visits'];
+
+  if (typeof key !== 'string' || !allowedKeys.includes(key)) {
     return response.status(400).json({ success: false });
   }
 
