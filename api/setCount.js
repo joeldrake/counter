@@ -1,4 +1,14 @@
-import { get } from "@vercel/edge-config";
+import 'dotenv/config';
+import { connect } from '@planetscale/database';
+
+// DB connection
+const deets = {
+  host: process.env.DATABASE_HOST,
+  username: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+};
+
+const conn = connect(deets);
 
 /**
  * @param {import('@vercel/node').VercelRequest} request
@@ -7,46 +17,26 @@ import { get } from "@vercel/edge-config";
 export default async function handler(request, response) {
   const key = request?.body?.id;
 
-  response.setHeader("Access-Control-Allow-Origin", "*");
-  response.setHeader("Access-Control-Allow-Headers", "*");
-  response.setHeader("Access-Control-Allow-Methods", "POST");
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Headers', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'POST');
 
-  if (request.method === "OPTIONS") {
-    response.setHeader("Connection", "keep-alive");
+  if (request.method === 'OPTIONS') {
+    response.setHeader('Connection', 'keep-alive');
 
     response.status(200).json();
     return;
   }
 
-  if (typeof key !== "string") {
+  if (typeof key !== 'string') {
     return response.status(400).json({ success: false });
   }
 
-  let currentValue = await get(key);
+  const planetScaleResponse = await conn.execute(
+    `UPDATE counter SET value = value + 1 WHERE id = '${key}'`,
+  );
 
-  if (typeof currentValue !== "number") {
-    // only allow existing keys with a number
-    return response.status(400).json({ success: false });
-  }
-
-  const url = `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`;
-
-  const result = await fetch(url, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${process.env.EDGE_CONFIG_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      items: [
-        {
-          operation: "update",
-          key: key,
-          value: currentValue + 1,
-        },
-      ],
-    }),
-  });
-
-  response.status(200).json({ success: result.status === 200 });
+  response
+    .status(200)
+    .json({ success: planetScaleResponse?.rowsAffected === 1 });
 }
